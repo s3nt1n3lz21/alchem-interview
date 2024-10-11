@@ -16,13 +16,6 @@ SQLite
 
 Python Script
 
-## Understand And Bullet Points Requirements
-## Visualise The Problem And Data Flow
-## Choose Technologies And Tools
-## Consider Future Issues/Improvements/Scalability
-## Define Models And Schemas
-## Create Prototypes
-
 # Running
 
 ## Frontend
