@@ -1,9 +1,19 @@
 from fastapi import FastAPI, HTTPException
 import sqlite3
+from fastapi.middleware.cors import CORSMiddleware
 import logging
 
 # Initialize the app and configure logging
 app = FastAPI()
+
+# Enable CORS middleware
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:5010"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 logging.basicConfig(level=logging.INFO)
 
