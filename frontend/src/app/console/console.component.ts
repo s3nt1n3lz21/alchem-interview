@@ -1,9 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Inject, makeStateKey, OnInit, PLATFORM_ID, TransferState } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, interval, of } from 'rxjs';
-import { catchError, switchMap } from 'rxjs/operators';
-import { CommonModule } from '@angular/common';
+import { catchError, startWith, switchMap, timeout } from 'rxjs/operators';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { IEvent } from '../models/Event';
+
+const EVENT_KEY = makeStateKey<IEvent[]>('eventData');
 
 @Component({
   selector: 'app-console',
@@ -15,17 +17,37 @@ import { IEvent } from '../models/Event';
 export class ConsoleComponent implements OnInit {
   eventData: IEvent[] = []
 
-  constructor(private http: HttpClient) {}
+  constructor(
+    private http: HttpClient,
+    private transferState: TransferState,
+    @Inject(PLATFORM_ID) private platformId: Object // Inject platform to detect browser/server
+  ) {}
 
   ngOnInit() {
-    // Poll the API every 5 seconds
-    interval(5000)
-      .pipe(switchMap(() => this.getEvents()))
-      .subscribe(data => this.eventData = data);
+    if (isPlatformBrowser(this.platformId)) {
+      // On the client side, poll the API every 5 seconds
+      interval(5000)
+        .pipe(
+          startWith(this.eventData),
+          switchMap(() => this.getEvents()),
+          catchError(() => {
+            console.error('Error fetching events');
+            return of([]);
+          })
+        )
+        .subscribe(data => this.eventData = data);
+    } else {
+      // On the server-side, attempt to fetch data only once
+      this.eventData = this.transferState.get(EVENT_KEY, []);
+      this.getEvents().subscribe(data => {
+        this.eventData = data;
+        this.transferState.set(EVENT_KEY, data);
+      });
+    }
   }
 
-  getEvents(): Observable<any> {
-    return this.http.get('http://127.0.0.1:8000/status').pipe(
+  getEvents(): Observable<IEvent[]> {
+    return this.http.get<IEvent[]>('http://127.0.0.1:8000/status').pipe(
       catchError(() => of([]))
     );
   }
