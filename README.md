@@ -33,6 +33,10 @@ ng serve
 
 uvicorn main:app --reload
 
+## Event Simulator
+
+python event_simulator.py
+
 # Testing
 
 # Possible Improvements
