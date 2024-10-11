@@ -47,3 +47,5 @@ python event_simulator.py
 - Add retry requests, validation and error handling
 - Add API authentication 
 - Use AWS Lambda and API Gateway for the API endpoints
+
+![alt text](image.png)
