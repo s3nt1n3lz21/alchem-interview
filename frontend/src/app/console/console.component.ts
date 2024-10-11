@@ -47,7 +47,7 @@ export class ConsoleComponent implements OnInit {
   }
 
   getEvents(): Observable<IEvent[]> {
-    return this.http.get<IEvent[]>('http://127.0.0.1:8000/status').pipe(
+    return this.http.get<IEvent[]>('http://127.0.0.1:8000/events').pipe(
       catchError(() => of([]))
     );
   }
