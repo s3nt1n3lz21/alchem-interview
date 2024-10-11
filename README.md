@@ -27,7 +27,7 @@ Python Script
 
 ## Frontend
 
-ng serve
+ng serve --port 5010
 
 ## Backend
 
