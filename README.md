@@ -1,27 +1,37 @@
 # alchem-interview
 
 # Frontend
+
 Angular
 
 # Backend
+
 Python - Fast API
 
 # Database
+
 SQLite
 
 # Event Simulator
+
 Python Script
 
-# Understand And Bullet Points Requirements
-# Visualise The Problem And Data Flow
-# Choose Technologies And Tools
-# Consider Future Issues/Improvements/Scalability
-# Define Models And Schemas
-# Create Prototypes
+## Understand And Bullet Points Requirements
+## Visualise The Problem And Data Flow
+## Choose Technologies And Tools
+## Consider Future Issues/Improvements/Scalability
+## Define Models And Schemas
+## Create Prototypes
 
 # Running
 
+## Frontend
+
 ng serve
+
+## Backend
+
+uvicorn main:app --reload
 
 # Testing
 
