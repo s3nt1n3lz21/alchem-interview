@@ -4,36 +4,56 @@ import { Observable, interval, of } from 'rxjs';
 import { catchError, startWith, switchMap, filter, take } from 'rxjs/operators';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { IEvent } from '../models/Event';
+import { AgGridModule } from 'ag-grid-angular';
+import { ColDef } from 'ag-grid-community';
 
 const EVENT_KEY = makeStateKey<IEvent[]>('eventData');
 
 @Component({
   selector: 'app-console',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, AgGridModule],
   templateUrl: './console.component.html',
   styleUrls: ['./console.component.scss']
 })
 export class ConsoleComponent implements OnInit {
   eventData = signal<IEvent[]>([]);
+  columnDefs: ColDef[] = [];
+  defaultColDef = {};
+  isBrowser = false; // New variable to track if platform is browser
 
   constructor(
     private http: HttpClient,
     private transferState: TransferState,
     @Inject(PLATFORM_ID) private platformId: Object,
     private appRef: ApplicationRef
-  ) {}
+  ) {
+    this.isBrowser = isPlatformBrowser(this.platformId); // Set flag for browser environment
+  }
 
   ngOnInit() {
-    if (isPlatformBrowser(this.platformId)) {
-      // Wait for the application to become stable before starting the polling
+    if (this.isBrowser) {
+      // Only initialize AG Grid if on the browser
+      this.columnDefs = [
+        { headerName: 'Event ID', field: 'id', sortable: true, filter: true },
+        { headerName: 'Status', field: 'status', sortable: true, filter: true },
+        { headerName: 'Last Updated', field: 'timestamp', sortable: true, filter: true },
+        { headerName: 'Data', field: 'data', sortable: true, filter: true }
+      ];
+
+      this.defaultColDef = {
+        resizable: true,
+        filter: true,
+        sortable: true
+      };
+
+      // Continue with browser-specific logic
       this.appRef.isStable
         .pipe(
-          filter(stable => stable), // Ensure the app is stable
-          take(1) // Take the first stable state and start polling
+          filter(stable => stable),
+          take(1)
         )
         .subscribe(() => {
-          // Now start the polling after the app is stable
           interval(5000)
             .pipe(
               startWith(this.eventData()),
@@ -69,5 +89,5 @@ export class ConsoleComponent implements OnInit {
 
   trackByEventId(index: number, event: IEvent): number {
     return event.id;
-  }  
+  }
 }

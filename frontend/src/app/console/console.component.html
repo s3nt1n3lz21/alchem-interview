@@ -1,9 +1,16 @@
 <div *ngIf="eventData">
     <h2>Events</h2>
-    <ul>
-      <li *ngFor="let event of eventData(); trackBy: trackByEventId">
-        Event ID: {{event.id}}, Status: {{event.status}}, Last Updated: {{event.timestamp}}, Data: {{event.data}}
-      </li>
-    </ul>
+    
+    <!-- Render ag-grid-angular only if the platform is browser -->
+    <ag-grid-angular 
+      *ngIf="isBrowser"
+      class="ag-theme-alpine-dark" 
+      [rowData]="eventData()" 
+      [columnDefs]="columnDefs"
+      [defaultColDef]="defaultColDef"
+      rowSelection="single"
+      [animateRows]="true"
+      style="width: 100%; height: 500px;">
+    </ag-grid-angular>
   </div>
   
