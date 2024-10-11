@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, interval } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
+import { Observable, interval, of } from 'rxjs';
+import { catchError, switchMap } from 'rxjs/operators';
 import { CommonModule } from '@angular/common';
 import { IEvent } from '../models/Event';
 
@@ -25,6 +25,8 @@ export class ConsoleComponent implements OnInit {
   }
 
   getEvents(): Observable<any> {
-    return this.http.get('http://127.0.0.1:8000/status');
+    return this.http.get('http://127.0.0.1:8000/status').pipe(
+      catchError(() => of([]))
+    );
   }
 }
